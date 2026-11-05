@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORION LABS</title>
+    <style>
+        /* ==========================================
+           VARIABLES GLOBALES - CLON SPACEX
+           ========================================== */
+        :root {
+            --spacex-black: #000000;
+            --spacex-white: #ffffff;
+            --spacex-gray: #888888;
+            --spacex-border: rgba(255, 255, 255, 0.2);
+            --spacex-card-bg: rgba(0, 0, 0, 0.75);
+            --font-spacex: 'D-DIN', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-spacex);
+            background-color: var(--spacex-black);
+            color: var(--spacex-white);
+            line-height: 1.2;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ==========================================
+           SPLASH SCREEN ESPACIAL
+           ========================================== */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--spacex-black);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .splash-content {
+            position: relative;
+            text-align: center;
+        }
+
+        .splash-logo {
+            height: 45px;
+            width: auto;
+            opacity: 0;
+            animation: fadeInLogo 1.5s ease-out 0.2s forwards;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.4));
+        }
+
+        .orbit-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 260px;
+            height: 260px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            opacity: 0;
+            animation: orbitExpand 1.5s ease-out 0.6s forwards;
+        }
+
+        .orbit-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            animation: orbitDot 5s linear infinite;
+            box-shadow: 0 0 6px #ffffff;
+        }
+
+        .loader-bar {
+            margin: 40px auto 0 auto;
+            width: 140px;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loader-fill {
+            position: absolute;
+            height: 100%;
+            width: 0%;
+            background-color: #ffffff;
+            animation: loadProgress 2s ease-in-out forwards;
+        }
+
+        @keyframes fadeInLogo {
+            to { opacity: 1; transform: scale(1.05); }
+        }
+
+        @keyframes orbitExpand {
+            to { opacity: 1; width: 300px; height: 300px; }
+        }
+
+        @keyframes orbitDot {
+            0% { transform: rotate(0deg) translateX(150px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
+        }
+
+        @keyframes loadProgress {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
+        /* ==========================================
+           TOP BAR (SOLO LOGO IMAGEN Y SELECTOR IDIOMA)
+           ========================================== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 50px;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        /* Logo Tipo Imagen con proporciones SpaceX */
+        .nav-logo-img {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-logo-img:hover {
+            opacity: 0.8;
+        }
+
+        .nav-right-group {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav button.nav-link {
+            background: transparent;
+            border: none;
+            color: var(--spacex-white);
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 5px 0;
+            position: relative;
+            font-family: inherit;
+            opacity: 0.85;
+            transition: opacity 0.3s ease;
+        }
+
+        nav button.nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 1px;
+            background-color: var(--spacex-white);
+            transition: width 0.3s ease;
+        }
+
+        nav button.nav-link:hover, nav button.nav-link.active {
+            opacity: 1;
+            outline: none;
+        }
+
+        nav button.nav-link.active::after, nav button.nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Switcher de Idioma */
+        .lang-switch {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: transparent;
+            border: 1px solid var(--spacex-border);
+            padding: 4px 10px;
+            border-radius: 2px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: var(--spacex-gray);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+
+        .lang-btn.active {
+            color: var(--spacex-white);
+        }
+
+        .lang-btn:hover {
+            color: var(--spacex-white);
+        }
+
+        .lang-divider {
+            color: var(--spacex-border);
+        }
+
+        /* ==========================================
+           PANTALLAS / SECCIONES
+           ========================================== */
+        .main-container {
+            flex: 1;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .screen {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            min-height: calc(100vh - 50px);
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            opacity: 1;
+        }
+
+        /* ==========================================
+           BOTÓN OFICIAL ESTILO SPACEX
+           ========================================== */
+        .btn-spacex {
+            display: inline-block;
+            background: transparent;
+            border: 2px solid var(--spacex-white);
+            color: var(--spacex-white);
+            padding: 16px 42px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .btn-spacex:hover {
+            background-color: var(--spacex-white);
+            color: var(--spacex-black);
+        }
+
+        /* ==========================================
+           PANTALLA 1: INICIO (HERO FULLSCREEN)
+           ========================================== */
+        #inicio {
+            position: relative;
+            height: calc(100vh - 50px);
+            justify-content: flex-end;
+            padding: 0 0 100px 80px;
+            overflow: hidden;
+        }
+
+        .hero-video-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .hero-video-bg video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+            filter: brightness(0.65);
+        }
+
+        .hero-content {
+            max-width: 650px;
+            z-index: 2;
+        }
+
+        .hero-content h2 {
+            font-size: 0.95rem;
+            font-weight: 400;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            color: var(--spacex-white);
+        }
+
+        .hero-content h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            line-height: 1.05;
+        }
+
+        /* ==========================================
+           PANTALLA 2: APPS (FIJADO ABAJO DEL TOP BAR)
+           ========================================== */
+        #apps {
+            padding: 95px 80px 80px 80px; /* Pegado inmediatamente bajo los 80px de la Top Bar */
+            background-color: var(--spacex-black);
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .app-card {
+            border: 1px solid var(--spacex-border);
+            padding: 35px;
+            background: var(--spacex-card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: border-color 0.3s ease;
+        }
+
+        .app-card:hover {
+            border-color: var(--spacex-white);
+        }
+
+        .app-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .app-card p {
+            color: var(--spacex-gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* ==========================================
+           PANTALLA 3: ACERCA DE (ALINEADO ARRIBA DEL COPYRIGHT)
+           ========================================== */
+        #acerca {
+            padding: 100px 80px 90px 80px;
+            background-color: var(--spacex-black);
+            justify-content: flex-end; /* Lo desplaza hacia la parte inferior */
+        }
+
+        .markdown-container {
+            max-width: 850px;
+            border-top: 1px solid var(--spacex-border);
+            padding-top: 30px;
+            margin-top: auto; /* Empuja el contenido hacia el final */
+        }
+
+        .markdown-container h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .markdown-container h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 30px;
+            margin-bottom: 12px;
+            color: var(--spacex-white);
+        }
+
+        .markdown-container p {
+            color: var(--spacex-gray);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .markdown-container ul {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .markdown-container li {
+            color: var(--spacex-gray);
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .markdown-container li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            color: var(--spacex-white);
+        }
+
+        /* ==========================================
+           COPYRIGHT SPACEX STYLE
+           ========================================== */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--spacex-gray);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 700;
+            z-index: 999;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* ==========================================
+           RESPONSIVE DESIGN (ADAPTACIÓN A TODO DISPOSITIVO)
+           ========================================== */
+        @media (max-width: 1024px) {
+            nav { padding: 0 30px; }
+            #inicio { padding: 0 0 80px 40px; }
+            #apps, #acerca { padding-left: 40px; padding-right: 40px; }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 0 20px;
+                height: 70px;
+            }
+
+            .nav-logo-img { height: 26px; }
+
+            .nav-right-group { gap: 15px; }
+
+            nav ul { gap: 15px; }
+            nav button.nav-link { font-size: 0.75rem; letter-spacing: 1px; }
+
+            .screen { min-height: calc(100vh - 50px); }
+
+            #inicio {
+                padding: 0 20px 80px 20px;
+            }
+            .hero-content h1 { font-size: 2.2rem; }
+
+            #apps {
+                padding: 85px 20px 70px 20px;
+            }
+            .page-header h1 { font-size: 2rem; }
+
+            #acerca {
+                padding: 90px 20px 70px 20px;
+            }
+            .markdown-container h1 { font-size: 2rem; }
+
+            .btn-spacex {
+                width: 100%;
+                padding: 14px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SPLASH SCREEN -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <img src="logo.png" alt="Orion Labs Logo" class="splash-logo">
+            <div class="orbit-container">
+                <div class="orbit-dot"></div>
+            </div>
+            <div class="loader-bar">
+                <div class="loader-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOP BAR (TÍTULO TIPO IMAGEN Y SELECCIÓN DE IDIOMA) -->
+    <nav>
+        <div class="logo-container" onclick="switchScreen('inicio')">
+            <!-- Imagen del Logo como título principal de la barra -->
+            <img src="logo.png" alt="Orion Labs" class="nav-logo-img">
+        </div>
+
+        <div class="nav-right-group">
+            <ul>
+                <li><button onclick="switchScreen('inicio')" id="btn-inicio" class="nav-link active" data-i18n="nav_inicio">Inicio</button></li>
+                <li><button onclick="switchScreen('apps')" id="btn-apps" class="nav-link" data-i18n="nav_apps">Apps</button></li>
+                <li><button onclick="switchScreen('acerca')" id="btn-acerca" class="nav-link" data-i18n="nav_acerca">Acerca de</button></li>
+            </ul>
+
+            <!-- Select de Idioma -->
+            <div class="lang-switch">
+                <button class="lang-btn active" id="lang-es" onclick="setLanguage('es')">ES</button>
+                <span class="lang-divider">|</span>
+                <button class="lang-btn" id="lang-en" onclick="setLanguage('en')">EN</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENEDOR DE PANTALLAS -->
+    <div class="main-container">
+
+        <!-- PANTALLA 1: INICIO -->
+        <div id="inicio" class="screen active">
+            <div class="hero-video-bg">
+                <video autoplay muted loop playsinline>
+                    <source src="video.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="hero-content">
+                <h2 data-i18n="hero_sub">Misión Actual</h2>
+                <h1 data-i18n="hero_title">Sistemas & Arquitectura Digital</h1>
+                <a href="#apps" onclick="switchScreen('apps')" class="btn-spacex" data-i18n="hero_btn">Ver Misiones</a>
+            </div>
+        </div>
+
+        <!-- PANTALLA 2: APPS (CENTRO DE DESCARGAS) -->
+        <div id="apps" class="screen">
+            <div class="page-header">
+                <h1 data-i18n="apps_header">Centro de Descargas</h1>
+            </div>
+            <div class="apps-grid">
+
+                <div class="app-card">
+                    <div>
+                        <h3 data-i18n="app1_title">Aplicación Desktop</h3>
+                        <p data-i18n="app1_desc">Herramienta optimizada para gestión local y control de procesos en tiempo real.</p>
+                    </div>
+                    <a href="https://github.com/mrmakoto92" target="_blank" class="btn-spacex" data-i18n="btn_download">Descargar</a>
+                </div>
+
+                <div class="app-card">
+                    <div>
+                        <h3 data-i18n="app2_title">Sistema CCTV / Stream</h3>
+                        <p data-i18n="app2_desc">Monitoreo multi-cámara de baja latencia mediante protocolos ONVIF y RTSP.</p>
+                    </div>
+                    <a href="https://github.com/mrmakoto92" target="_blank" class="btn-spacex" data-i18n="btn_download">Descargar</a>
+                </div>
+
+                <div class="app-card">
+                    <div>
+                        <h3 data-i18n="app3_title">Custom Launcher UI</h3>
+                        <p data-i18n="app3_desc">Interfaz de usuario ligera enfocada en velocidad y rendimiento puro.</p>
+                    </div>
+                    <a href="https://github.com/mrmakoto92" target="_blank" class="btn-spacex" data-i18n="btn_download">Descargar</a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- PANTALLA 3: ACERCA DE (ALINEADO ARRIBA DEL COPYRIGHT) -->
+        <div id="acerca" class="screen">
+            <div class="markdown-container">
+                <h1># Orion Labs</h1>
+                <p data-i18n="about_intro">Laboratorio y centro de desarrollo independiente dedicado a la ingeniería de software rápida y autónoma.</p>
+
+                <h2 data-i18n="about_dev_title">## Desarrollador Independiente</h2>
+                <p data-i18n="about_dev_desc">Soy un desarrollador enfocado en proyectos tecnológicos avanzados, herramientas de sistema y arquitecturas personalizadas cuando surge la oportunidad.</p>
+
+                <h2 data-i18n="about_principles_title">## Principios</h2>
+                <ul>
+                    <li data-i18n="about_p1"><strong>Minimalismo Absoluto:</strong> Eliminación de interfaces innecesarias en favor del rendimiento.</li>
+                    <li data-i18n="about_p2"><strong>Sistemas Autónomos:</strong> Creación de soluciones independientes y duraderas.</li>
+                    <li data-i18n="about_p3"><strong>Precisión:</strong> Código limpio orientado a la estabilidad funcional.</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- COPYRIGHT FIJO CON AÑO 2026 -->
+    <footer>
+        Copyright © Orionlabs 2026
+    </footer>
+
+    <!-- SCRIPT DE NAVEGACIÓN, IDIOMAS Y SPLASH -->
+    <script>
+        // DICCIONARIO MULTILENGUAJE (Español por defecto)
+        const i18n = {
+            es: {
+                nav_inicio: "Inicio",
+                nav_apps: "Apps",
+                nav_acerca: "Acerca de",
+                hero_sub: "Misión Actual",
+                hero_title: "Sistemas & Arquitectura Digital",
+                hero_btn: "Ver Misiones",
+                apps_header: "Centro de Descargas",
+                btn_download: "Descargar",
+                app1_title: "Aplicación Desktop",
+                app1_desc: "Herramienta optimizada para gestión local y control de procesos en tiempo real.",
+                app2_title: "Sistema CCTV / Stream",
+                app2_desc: "Monitoreo multi-cámara de baja latencia mediante protocolos ONVIF y RTSP.",
+                app3_title: "Custom Launcher UI",
+                app3_desc: "Interfaz de usuario ligera enfocada en velocidad y rendimiento puro.",
+                about_intro: "Laboratorio y centro de desarrollo independiente dedicado a la ingeniería de software rápida y autónoma.",
+                about_dev_title: "## Desarrollador Independiente",
+                about_dev_desc: "Soy un desarrollador enfocado en proyectos tecnológicos avanzados, herramientas de sistema y arquitecturas personalizadas cuando surge la oportunidad.",
+                about_principles_title: "## Principios",
+                about_p1: "<strong>Minimalismo Absoluto:</strong> Eliminación de interfaces innecesarias en favor del rendimiento.",
+                about_p2: "<strong>Sistemas Autónomos:</strong> Creación de soluciones independientes y duraderas.",
+                about_p3: "<strong>Precisión:</strong> Código limpio orientado a la estabilidad funcional."
+            },
+            en: {
+                nav_inicio: "Home",
+                nav_apps: "Apps",
+                nav_acerca: "About",
+                hero_sub: "Current Mission",
+                hero_title: "Systems & Digital Architecture",
+                hero_btn: "View Missions",
+                apps_header: "Download Center",
+                btn_download: "Download",
+                app1_title: "Desktop Application",
+                app1_desc: "Optimized tool for real-time local management and process control.",
+                app2_title: "CCTV / Stream System",
+                app2_desc: "Low-latency multi-camera monitoring via ONVIF and RTSP protocols.",
+                app3_title: "Custom Launcher UI",
+                app3_desc: "Lightweight user interface focused on speed and pure performance.",
+                about_intro: "Independent laboratory and development hub dedicated to fast and autonomous software engineering.",
+                about_dev_title: "## Independent Developer",
+                about_dev_desc: "Independent developer focused on advanced tech projects, system tools, and custom architectures.",
+                about_principles_title: "## Principles",
+                about_p1: "<strong>Absolute Minimalism:</strong> Removal of unnecessary interfaces in favor of raw performance.",
+                about_p2: "<strong>Autonomous Systems:</strong> Building long-lasting and independent solutions.",
+                about_p3: "<strong>Precision:</strong> Clean code oriented towards functional stability."
+            }
+        };
+
+        let currentLang = 'es';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (i18n[lang][key]) {
+                    element.innerHTML = i18n[lang][key];
+                }
+            });
+
+            document.getElementById('lang-es').classList.toggle('active', lang === 'es');
+            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+        }
+
+        function switchScreen(screenId) {
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(screen => screen.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('nav button.nav-link');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(screenId).classList.add('active');
+            document.getElementById('btn-' + screenId).classList.add('active');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const splash = document.getElementById('splash-screen');
+                splash.classList.add('fade-out');
+            }, 2500);
+        });
+    </script>
+
+</body>
+</html>
