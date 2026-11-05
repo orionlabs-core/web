@@ -131,7 +131,7 @@
         }
 
         /* ==========================================
-           TOP BAR (SOLO LOGO IMAGEN Y SELECTOR IDIOMA)
+           TOP BAR
            ========================================== */
         nav {
             position: fixed;
@@ -155,7 +155,6 @@
             cursor: pointer;
         }
 
-        /* Logo Tipo Imagen con proporciones SpaceX */
         .nav-logo-img {
             height: 32px;
             width: auto;
@@ -301,7 +300,7 @@
         }
 
         /* ==========================================
-           PANTALLA 1: INICIO (HERO FULLSCREEN)
+           PANTALLA 1: INICIO
            ========================================== */
         #inicio {
             position: relative;
@@ -353,10 +352,10 @@
         }
 
         /* ==========================================
-           PANTALLA 2: APPS (FIJADO ABAJO DEL TOP BAR)
+           PANTALLA 2: APPS
            ========================================== */
         #apps {
-            padding: 95px 80px 80px 80px; /* Pegado inmediatamente bajo los 80px de la Top Bar */
+            padding: 95px 80px 80px 80px;
             background-color: var(--spacex-black);
         }
 
@@ -407,19 +406,19 @@
         }
 
         /* ==========================================
-           PANTALLA 3: ACERCA DE (ALINEADO ARRIBA DEL COPYRIGHT)
+           PANTALLA 3: ACERCA DE
            ========================================== */
         #acerca {
             padding: 100px 80px 90px 80px;
             background-color: var(--spacex-black);
-            justify-content: flex-end; /* Lo desplaza hacia la parte inferior */
+            justify-content: flex-end;
         }
 
         .markdown-container {
             max-width: 850px;
             border-top: 1px solid var(--spacex-border);
             padding-top: 30px;
-            margin-top: auto; /* Empuja el contenido hacia el final */
+            margin-top: auto;
         }
 
         .markdown-container h1 {
@@ -468,7 +467,7 @@
         }
 
         /* ==========================================
-           COPYRIGHT SPACEX STYLE
+           COPYRIGHT
            ========================================== */
         footer {
             position: fixed;
@@ -490,7 +489,7 @@
         }
 
         /* ==========================================
-           RESPONSIVE DESIGN (ADAPTACIÓN A TODO DISPOSITIVO)
+           RESPONSIVE DESIGN
            ========================================== */
         @media (max-width: 1024px) {
             nav { padding: 0 30px; }
@@ -537,10 +536,10 @@
 </head>
 <body>
 
-    <!-- SPLASH SCREEN -->
+    <!-- SPLASH SCREEN (Ruta: image/logo.png) -->
     <div id="splash-screen">
         <div class="splash-content">
-            <img src="logo.png" alt="Orion Labs Logo" class="splash-logo">
+            <img src="image/logo.png" alt="Orion Labs Logo" class="splash-logo">
             <div class="orbit-container">
                 <div class="orbit-dot"></div>
             </div>
@@ -550,11 +549,10 @@
         </div>
     </div>
 
-    <!-- TOP BAR (TÍTULO TIPO IMAGEN Y SELECCIÓN DE IDIOMA) -->
+    <!-- TOP BAR (Ruta: image/logo-nav.png) -->
     <nav>
         <div class="logo-container" onclick="switchScreen('inicio')">
-            <!-- Imagen del Logo como título principal de la barra -->
-            <img src="logo.png" alt="Orion Labs" class="nav-logo-img">
+            <img src="image/logo-nav.png" alt="Orion Labs" class="nav-logo-img">
         </div>
 
         <div class="nav-right-group">
@@ -564,7 +562,6 @@
                 <li><button onclick="switchScreen('acerca')" id="btn-acerca" class="nav-link" data-i18n="nav_acerca">Acerca de</button></li>
             </ul>
 
-            <!-- Select de Idioma -->
             <div class="lang-switch">
                 <button class="lang-btn active" id="lang-es" onclick="setLanguage('es')">ES</button>
                 <span class="lang-divider">|</span>
@@ -590,7 +587,7 @@
             </div>
         </div>
 
-        <!-- PANTALLA 2: APPS (CENTRO DE DESCARGAS) -->
+        <!-- PANTALLA 2: APPS -->
         <div id="apps" class="screen">
             <div class="page-header">
                 <h1 data-i18n="apps_header">Centro de Descargas</h1>
@@ -624,7 +621,7 @@
             </div>
         </div>
 
-        <!-- PANTALLA 3: ACERCA DE (ALINEADO ARRIBA DEL COPYRIGHT) -->
+        <!-- PANTALLA 3: ACERCA DE -->
         <div id="acerca" class="screen">
             <div class="markdown-container">
                 <h1># Orion Labs</h1>
@@ -644,14 +641,13 @@
 
     </div>
 
-    <!-- COPYRIGHT FIJO CON AÑO 2026 -->
+    <!-- COPYRIGHT -->
     <footer>
         Copyright © Orionlabs 2026
     </footer>
 
-    <!-- SCRIPT DE NAVEGACIÓN, IDIOMAS Y SPLASH -->
+    <!-- SCRIPTS -->
     <script>
-        // DICCIONARIO MULTILENGUAJE (Español por defecto)
         const i18n = {
             es: {
                 nav_inicio: "Inicio",
