@@ -13,7 +13,7 @@
             --spacex-white: #ffffff;
             --spacex-gray: #888888;
             --spacex-border: rgba(255, 255, 255, 0.2);
-            --spacex-card-bg: rgba(0, 0, 0, 0.75);
+            --spacex-card-bg: rgba(0, 0, 0, 0.85);
             --font-spacex: 'D-DIN', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
         }
 
@@ -64,11 +64,11 @@
         }
 
         .splash-logo {
-            height: 45px;
+            height: 75px; /* Logo del Splash Screen agrandado */
             width: auto;
             opacity: 0;
             animation: fadeInLogo 1.5s ease-out 0.2s forwards;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.4));
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
         }
 
         .orbit-container {
@@ -76,8 +76,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 260px;
-            height: 260px;
+            width: 280px;
+            height: 280px;
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 50%;
             opacity: 0;
@@ -116,12 +116,12 @@
         }
 
         @keyframes orbitExpand {
-            to { opacity: 1; width: 300px; height: 300px; }
+            to { opacity: 1; width: 320px; height: 320px; }
         }
 
         @keyframes orbitDot {
-            0% { transform: rotate(0deg) translateX(150px) rotate(0deg); }
-            100% { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
+            0% { transform: rotate(0deg) translateX(160px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(160px) rotate(-360deg); }
         }
 
         @keyframes loadProgress {
@@ -156,7 +156,7 @@
         }
 
         .nav-logo-img {
-            height: 32px;
+            height: 42px; /* Logo del Top Bar agrandado */
             width: auto;
             object-fit: contain;
             transition: opacity 0.3s ease;
@@ -176,6 +176,7 @@
             display: flex;
             list-style: none;
             gap: 30px;
+            align-items: center;
         }
 
         nav button.nav-link {
@@ -214,6 +215,27 @@
             width: 100%;
         }
 
+        /* Botón de Menú Hamburguesa (Móvil) */
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 28px;
+            height: 20px;
+            z-index: 1001;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: var(--spacex-white);
+            transition: all 0.3s ease;
+        }
+
         /* Switcher de Idioma */
         .lang-switch {
             display: flex;
@@ -239,11 +261,7 @@
             transition: color 0.3s ease;
         }
 
-        .lang-btn.active {
-            color: var(--spacex-white);
-        }
-
-        .lang-btn:hover {
+        .lang-btn.active, .lang-btn:hover {
             color: var(--spacex-white);
         }
 
@@ -466,6 +484,11 @@
             color: var(--spacex-white);
         }
 
+        .github-box {
+            margin-top: 25px;
+            margin-bottom: 20px;
+        }
+
         /* ==========================================
            COPYRIGHT
            ========================================== */
@@ -489,7 +512,7 @@
         }
 
         /* ==========================================
-           RESPONSIVE DESIGN
+           RESPONSIVE DESIGN & MOBILE MENU
            ========================================== */
         @media (max-width: 1024px) {
             nav { padding: 0 30px; }
@@ -503,12 +526,42 @@
                 height: 70px;
             }
 
-            .nav-logo-img { height: 26px; }
+            .nav-logo-img { height: 34px; }
 
-            .nav-right-group { gap: 15px; }
+            .menu-toggle {
+                display: flex;
+            }
 
-            nav ul { gap: 15px; }
-            nav button.nav-link { font-size: 0.75rem; letter-spacing: 1px; }
+            .nav-right-group {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100vw;
+                height: calc(100vh - 70px);
+                background: rgba(0, 0, 0, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 40px;
+                transform: translateX(100%);
+                transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                padding: 40px 20px;
+            }
+
+            .nav-right-group.active {
+                transform: translateX(0);
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 30px;
+                text-align: center;
+            }
+
+            nav button.nav-link {
+                font-size: 1.2rem;
+            }
 
             .screen { min-height: calc(100vh - 50px); }
 
@@ -536,7 +589,7 @@
 </head>
 <body>
 
-    <!-- SPLASH SCREEN (Ruta: resources/image/logo.png) -->
+    <!-- SPLASH SCREEN -->
     <div id="splash-screen">
         <div class="splash-content">
             <img src="resources/images/logo.png" alt="Orion Labs Logo" class="splash-logo">
@@ -549,13 +602,20 @@
         </div>
     </div>
 
-    <!-- TOP BAR (Ruta: resources/image/logo-nav.png) -->
+    <!-- TOP BAR CON MENÚ MÓVIL Y LOGO AGRANDADO -->
     <nav>
-        <div class="logo-container" onclick="switchScreen('inicio')">
+        <div class="logo-container" onclick="switchScreen('inicio'); closeMenu();">
             <img src="resources/images/logo-nav.png" alt="Orion Labs" class="nav-logo-img">
         </div>
 
-        <div class="nav-right-group">
+        <!-- Botón de Menú de 3 Rayitas para Móviles -->
+        <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()" aria-label="Abrir menú">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <div class="nav-right-group" id="navGroup">
             <ul>
                 <li><button onclick="switchScreen('inicio')" id="btn-inicio" class="nav-link active" data-i18n="nav_inicio">Inicio</button></li>
                 <li><button onclick="switchScreen('apps')" id="btn-apps" class="nav-link" data-i18n="nav_apps">Apps</button></li>
@@ -636,6 +696,11 @@
                     <li data-i18n="about_p2"><strong>Sistemas Autónomos:</strong> Creación de soluciones independientes y duraderas.</li>
                     <li data-i18n="about_p3"><strong>Precisión:</strong> Código limpio orientado a la estabilidad funcional.</li>
                 </ul>
+
+                <!-- Botón de acceso a GitHub -->
+                <div class="github-box">
+                    <a href="https://github.com/orionlabs-core" target="_blank" class="btn-spacex" data-i18n="github_btn">Visitar GitHub Core</a>
+                </div>
             </div>
         </div>
 
@@ -670,7 +735,8 @@
                 about_principles_title: "## Principios",
                 about_p1: "<strong>Minimalismo Absoluto:</strong> Eliminación de interfaces innecesarias en favor del rendimiento.",
                 about_p2: "<strong>Sistemas Autónomos:</strong> Creación de soluciones independientes y duraderas.",
-                about_p3: "<strong>Precisión:</strong> Código limpio orientado a la estabilidad funcional."
+                about_p3: "<strong>Precisión:</strong> Código limpio orientado a la estabilidad funcional.",
+                github_btn: "Visitar GitHub Core"
             },
             en: {
                 nav_inicio: "Home",
@@ -693,7 +759,8 @@
                 about_principles_title: "## Principles",
                 about_p1: "<strong>Absolute Minimalism:</strong> Removal of unnecessary interfaces in favor of raw performance.",
                 about_p2: "<strong>Autonomous Systems:</strong> Building long-lasting and independent solutions.",
-                about_p3: "<strong>Precision:</strong> Clean code oriented towards functional stability."
+                about_p3: "<strong>Precision:</strong> Clean code oriented towards functional stability.",
+                github_btn: "Visit GitHub Core"
             }
         };
 
@@ -712,6 +779,16 @@
             document.getElementById('lang-en').classList.toggle('active', lang === 'en');
         }
 
+        function toggleMenu() {
+            const navGroup = document.getElementById('navGroup');
+            navGroup.classList.toggle('active');
+        }
+
+        function closeMenu() {
+            const navGroup = document.getElementById('navGroup');
+            navGroup.classList.remove('active');
+        }
+
         function switchScreen(screenId) {
             const screens = document.querySelectorAll('.screen');
             screens.forEach(screen => screen.classList.remove('active'));
@@ -722,6 +799,7 @@
             document.getElementById(screenId).classList.add('active');
             document.getElementById('btn-' + screenId).classList.add('active');
 
+            closeMenu();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
